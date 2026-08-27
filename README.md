@@ -1,0 +1,80 @@
+# Finale MTB Trail Status — Omarchy plugin
+
+A bar widget for [Omarchy](https://omarchy.org) that shows the live
+mountain-bike trail status for the **Finale Outdoor Region** (Finale Ligure,
+Italy), with a detail panel listing the currently closed trails and the latest
+notices from the official site.
+
+![state examples](preview.png)
+
+- **Bar label** — a bike glyph plus a compact token:
+  `✓` all open · `N` N trails closed · `✗` full-network closure · `…` unknown / stale.
+  The label is tinted (theme `urgent` colour) whenever trails are closed.
+- **Panel** (left click) — closed trails grouped by area with any "(until 2pm)"
+  qualifiers, the reference date and fetch age, a stale warning when the source
+  hasn't updated recently, the latest bulletins verbatim, and a link to the
+  source page. Press `R` to refresh, `Esc` to close.
+- **Middle click** refreshes; **right click** sends the summary as a notification.
+
+## Data source
+
+The widget does **not** scrape the website itself. A companion repo,
+[`finale-mtb-status`](https://github.com/bcooney/finale-mtb-status), runs a
+GitHub Actions cron job that scrapes
+[`finaleoutdoor.com/en/live/bike`](https://www.finaleoutdoor.com/en/live/bike)
+every 30 minutes and publishes a small `status.json` via GitHub Pages. This
+plugin's only network call is a `curl` of that file (default every 30 min).
+
+Rationale: parsing the CMS page in QML would be brittle and would break every
+install at once on a markup change; a central scraper is fixed once, is polite
+to a small tourism org's site, and serves last-known-good data with a timestamp.
+
+## Install
+
+```bash
+omarchy plugin add https://github.com/bcooney/omarchy-finale-plugin.git --enable
+```
+
+Then add the **Finale MTB** widget to a bar section via the Omarchy bar
+settings (or `~/.config/omarchy/shell.json`).
+
+### Local development
+
+```bash
+git clone https://github.com/bcooney/omarchy-finale-plugin.git \
+  ~/.config/omarchy/plugins/com.github.bcooney.finale-mtb
+omarchy-shell shell rescanPlugins
+omarchy plugin enable com.github.bcooney.finale-mtb
+
+# validate
+omarchy plugin validate ~/.config/omarchy/plugins/com.github.bcooney.finale-mtb
+qmllint -I "$OMARCHY_PATH/shell" BarWidget.qml Panel.qml
+
+# model unit tests (no Omarchy needed)
+node test/model-test.js
+```
+
+## Settings
+
+Per-widget keys in the `shell.json` layout entry:
+
+| key                 | default                                                                 | meaning                                   |
+|---------------------|-------------------------------------------------------------------------|-------------------------------------------|
+| `jsonUrl`           | `https://bcooney.github.io/finale-mtb-status/data/status.json`          | status feed to poll                       |
+| `refreshMinutes`    | `30` (min 5)                                                            | poll interval                             |
+| `staleAfterMinutes` | `180` (min 30)                                                          | age past which the reading is shown stale |
+| `glyph`             | `` (nf-fa-bicycle)                                                     | label icon; set `""` for text only        |
+
+## Files
+
+| file            | role                                                                   |
+|-----------------|-----------------------------------------------------------------------|
+| `manifest.json` | plugin manifest (`kinds: ["bar-widget"]`)                             |
+| `BarWidget.qml` | bar slot: renders the label, routes clicks, hosts the panel loader   |
+| `Panel.qml`     | the `curl` loop, refresh/stale timers, and the detail popup UI       |
+| `Model.js`      | pure parse/format helpers (unit-tested under node)                   |
+| `test/`         | `model-test.js`                                                       |
+
+## License
+
+MIT — see [LICENSE](LICENSE).

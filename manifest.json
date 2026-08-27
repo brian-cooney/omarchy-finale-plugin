@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "com.github.bcooney.finale-mtb",
+  "name": "Finale MTB Trail Status",
+  "version": "0.1.0",
+  "author": "Brian Cooney",
+  "license": "MIT",
+  "description": "Live Finale Outdoor Region mountain-bike trail closures in the bar, with a detail panel",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "BarWidget.qml" },
+  "barWidget": {
+    "displayName": "Finale MTB",
+    "description": "Live Finale Outdoor Region MTB trail closures",
+    "category": "Info",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}
