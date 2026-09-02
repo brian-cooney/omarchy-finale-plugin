@@ -15,8 +15,8 @@ import "Model.js" as Model
 // reading as stale once it ages past `staleAfterMinutes`.
 Panel {
   id: root
-  moduleName: "com.github.bcooney.finale-mtb"
-  ipcTarget: "com.github.bcooney.finale-mtb"
+  moduleName: "com.github.brian-cooney.finale-mtb"
+  ipcTarget: "com.github.brian-cooney.finale-mtb"
   manageIpc: false
 
   property var anchorItem: null
@@ -29,7 +29,7 @@ Panel {
 
   // ---- Configuration (per-widget shell.json entry) -----------------------
   readonly property string jsonUrl: setting("jsonUrl",
-    "https://bcooney.github.io/finale-mtb-status/data/status.json")
+    "https://brian-cooney.github.io/finale-mtb-status/data/status.json")
   readonly property int refreshMinutes: Math.max(5, parseInt(setting("refreshMinutes", 30), 10) || 30)
   readonly property int staleAfterMinutes: Math.max(30, parseInt(setting("staleAfterMinutes", 180), 10) || 180)
   // nf-fa-bicycle. Override with "" for a text-only label.

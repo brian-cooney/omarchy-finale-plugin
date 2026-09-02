@@ -10,7 +10,7 @@ import qs.Ui
 // sends the summary as a notification.
 BarWidget {
   id: root
-  moduleName: "com.github.bcooney.finale-mtb"
+  moduleName: "com.github.brian-cooney.finale-mtb"
 
   function injectPanel() {
     var target = panelLoader.item

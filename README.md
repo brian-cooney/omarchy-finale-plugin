@@ -19,7 +19,7 @@ notices from the official site.
 ## Data source
 
 The widget does **not** scrape the website itself. A companion repo,
-[`finale-mtb-status`](https://github.com/bcooney/finale-mtb-status), runs a
+[`finale-mtb-status`](https://github.com/brian-cooney/finale-mtb-status), runs a
 GitHub Actions cron job that scrapes
 [`finaleoutdoor.com/en/live/bike`](https://www.finaleoutdoor.com/en/live/bike)
 every 30 minutes and publishes a small `status.json` via GitHub Pages. This
@@ -32,7 +32,7 @@ to a small tourism org's site, and serves last-known-good data with a timestamp.
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/bcooney/omarchy-finale-plugin.git --enable
+omarchy plugin add https://github.com/brian-cooney/omarchy-finale-plugin.git --enable
 ```
 
 Then add the **Finale MTB** widget to a bar section via the Omarchy bar
@@ -41,13 +41,13 @@ settings (or `~/.config/omarchy/shell.json`).
 ### Local development
 
 ```bash
-git clone https://github.com/bcooney/omarchy-finale-plugin.git \
-  ~/.config/omarchy/plugins/com.github.bcooney.finale-mtb
+git clone https://github.com/brian-cooney/omarchy-finale-plugin.git \
+  ~/.config/omarchy/plugins/com.github.brian-cooney.finale-mtb
 omarchy-shell shell rescanPlugins
-omarchy plugin enable com.github.bcooney.finale-mtb
+omarchy plugin enable com.github.brian-cooney.finale-mtb
 
 # validate
-omarchy plugin validate ~/.config/omarchy/plugins/com.github.bcooney.finale-mtb
+omarchy plugin validate ~/.config/omarchy/plugins/com.github.brian-cooney.finale-mtb
 qmllint -I "$OMARCHY_PATH/shell" BarWidget.qml Panel.qml
 
 # model unit tests (no Omarchy needed)
@@ -60,7 +60,7 @@ Per-widget keys in the `shell.json` layout entry:
 
 | key                 | default                                                                 | meaning                                   |
 |---------------------|-------------------------------------------------------------------------|-------------------------------------------|
-| `jsonUrl`           | `https://bcooney.github.io/finale-mtb-status/data/status.json`          | status feed to poll                       |
+| `jsonUrl`           | `https://brian-cooney.github.io/finale-mtb-status/data/status.json`          | status feed to poll                       |
 | `refreshMinutes`    | `30` (min 5)                                                            | poll interval                             |
 | `staleAfterMinutes` | `180` (min 30)                                                          | age past which the reading is shown stale |
 | `glyph`             | `` (nf-fa-bicycle)                                                     | label icon; set `""` for text only        |
