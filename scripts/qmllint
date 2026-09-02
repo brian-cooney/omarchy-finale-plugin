@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Run qmllint over the plugin's QML against the installed Omarchy shell.
+#
+# Omarchy exposes its shell modules under the `qs.*` import namespace, which
+# Quickshell maps to the shell root at runtime. qmllint doesn't know that, so we
+# stand up a throwaway import dir with `qs -> <shell>` and point qmllint at it.
+#
+# Usage: scripts/qmllint            # lint BarWidget.qml and Panel.qml
+#        scripts/qmllint Panel.qml  # lint specific files
+set -euo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+shell_dir="${OMARCHY_PATH:-/usr/share/omarchy}/shell"
+[[ -d $shell_dir ]] || { echo "Omarchy shell not found at $shell_dir" >&2; exit 1; }
+
+qmllint="$(command -v qmllint || true)"
+[[ -n $qmllint ]] || for c in /usr/lib/qt6/bin/qmllint qmllint6 qmllint-qt6; do
+  command -v "$c" >/dev/null 2>&1 && { qmllint="$(command -v "$c")"; break; }
+  [[ -x $c ]] && { qmllint="$c"; break; }
+done
+[[ -n $qmllint ]] || { echo "qmllint not found (install qt6-declarative)" >&2; exit 1; }
+
+shim="$(mktemp -d)"
+trap 'rm -rf "$shim"' EXIT
+ln -s "$shell_dir" "$shim/qs"
+
+if (($# > 0)); then files=("$@"); else files=(BarWidget.qml Panel.qml); fi
+cd "$here"
+exec "$qmllint" -I "$shim" -I "$shell_dir" "${files[@]}"

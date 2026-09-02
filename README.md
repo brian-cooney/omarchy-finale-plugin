@@ -5,8 +5,6 @@ mountain-bike trail status for the **Finale Outdoor Region** (Finale Ligure,
 Italy), with a detail panel listing the currently closed trails and the latest
 notices from the official site.
 
-![state examples](preview.png)
-
 - **Bar label** — a bike glyph plus a compact token, in the normal bar
   foreground colour:
   `✓` all open · `N` N trails closed · `✗` full-network closure · `…` unknown / stale.
@@ -38,6 +36,17 @@ omarchy plugin add https://github.com/brian-cooney/omarchy-finale-plugin.git --e
 Then add the **Finale MTB** widget to a bar section via the Omarchy bar
 settings (or `~/.config/omarchy/shell.json`).
 
+## Remove
+
+```bash
+omarchy plugin remove com.github.brian-cooney.finale-mtb
+```
+
+This disables the widget and deletes
+`~/.config/omarchy/plugins/com.github.brian-cooney.finale-mtb`. The plugin
+writes nothing outside that directory (no services, no files elsewhere), so
+nothing else needs cleaning up.
+
 ### Local development
 
 ```bash
@@ -46,13 +55,19 @@ git clone https://github.com/brian-cooney/omarchy-finale-plugin.git \
 omarchy-shell shell rescanPlugins
 omarchy plugin enable com.github.brian-cooney.finale-mtb
 
-# validate
+# validate the manifest
 omarchy plugin validate ~/.config/omarchy/plugins/com.github.brian-cooney.finale-mtb
-qmllint -I "$OMARCHY_PATH/shell" BarWidget.qml Panel.qml
+
+# lint the QML against the installed shell (needs qt6-declarative)
+./scripts/qmllint
 
 # model unit tests (no Omarchy needed)
 node test/model-test.js
 ```
+
+`scripts/qmllint` reports no errors. It still prints `missing-property`
+warnings for `bar.*`, the loaded panel, and `Style.font.*` — the shell injects
+those objects untyped at runtime, so qmllint can't see their members.
 
 ## Settings
 
@@ -74,6 +89,7 @@ Per-widget keys in the `shell.json` layout entry:
 | `Panel.qml`     | the `curl` loop, refresh/stale timers, and the detail popup UI       |
 | `Model.js`      | pure parse/format helpers (unit-tested under node)                   |
 | `test/`         | `model-test.js`                                                       |
+| `scripts/`      | `qmllint` wrapper for local development                              |
 
 ## License
 

@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -139,6 +141,9 @@ Panel {
         root.everLoaded = true
       }
     }
+    // qmllint disable signal-handler-parameters
+    // (Quickshell's Process.exited passes a QProcess::ExitStatus that qmllint
+    //  can't resolve; the handler only reads exitCode.)
     onExited: function (exitCode) {
       if (exitCode !== 0) {
         root.everLoaded = true
@@ -285,12 +290,13 @@ Panel {
               model: root.areaGroups
 
               Column {
+                id: areaGroup
                 required property var modelData
                 width: content.width
                 spacing: Style.space(4)
 
                 Text {
-                  text: modelData.area
+                  text: areaGroup.modelData.area
                   color: Qt.darker(root.barForeground, 1.4)
                   font.family: root.bar ? root.bar.fontFamily : Style.font.family
                   font.pixelSize: Style.font.caption
@@ -299,9 +305,10 @@ Panel {
                 }
 
                 Repeater {
-                  model: modelData.trails
+                  model: areaGroup.modelData.trails
 
                   Row {
+                    id: trailRow
                     required property var modelData
                     width: content.width
                     spacing: Style.space(8)
@@ -314,15 +321,15 @@ Panel {
                     }
 
                     Text {
-                      text: modelData.trail
+                      text: trailRow.modelData.trail
                       color: root.barForeground
                       font.family: root.bar ? root.bar.fontFamily : Style.font.family
                       font.pixelSize: Style.font.body
                     }
 
                     Text {
-                      visible: modelData.note !== ""
-                      text: "(" + modelData.note + ")"
+                      visible: trailRow.modelData.note !== ""
+                      text: "(" + trailRow.modelData.note + ")"
                       color: Qt.darker(root.barForeground, 1.5)
                       font.family: root.bar ? root.bar.fontFamily : Style.font.family
                       font.pixelSize: Style.font.bodySmall
@@ -379,6 +386,7 @@ Panel {
               model: root.status ? root.status.notices : []
 
               Column {
+                id: notice
                 required property var modelData
                 width: content.width
                 spacing: Style.space(3)
@@ -386,7 +394,7 @@ Panel {
                 Text {
                   width: parent.width
                   visible: text !== ""
-                  text: (modelData.date ? modelData.date + " — " : "") + (modelData.title || "")
+                  text: (notice.modelData.date ? notice.modelData.date + " — " : "") + (notice.modelData.title || "")
                   color: root.barForeground
                   wrapMode: Text.WordWrap
                   font.family: root.bar ? root.bar.fontFamily : Style.font.family
@@ -397,7 +405,7 @@ Panel {
                 Text {
                   width: parent.width
                   visible: text !== ""
-                  text: Model.noticeParagraphs(modelData.text).join("\n")
+                  text: Model.noticeParagraphs(notice.modelData.text).join("\n")
                   color: Qt.darker(root.barForeground, 1.3)
                   wrapMode: Text.WordWrap
                   font.family: root.bar ? root.bar.fontFamily : Style.font.family
