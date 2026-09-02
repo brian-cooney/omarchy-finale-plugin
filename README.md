@@ -62,7 +62,7 @@ Per-widget keys in the `shell.json` layout entry:
 |---------------------|-------------------------------------------------------------------------|-------------------------------------------|
 | `jsonUrl`           | `https://brian-cooney.github.io/finale-mtb-status/data/status.json`          | status feed to poll                       |
 | `refreshMinutes`    | `30` (min 5)                                                            | poll interval                             |
-| `staleAfterMinutes` | `180` (min 30)                                                          | age past which the reading is shown stale |
+| `staleAfterMinutes` | `720` (min 60)                                                          | age of the feed's `checked_at` past which the reading is shown stale |
 | `glyph`             | `` (nf-fa-bicycle)                                                     | label icon; set `""` for text only        |
 
 ## Files

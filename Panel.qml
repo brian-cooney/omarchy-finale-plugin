@@ -12,7 +12,7 @@ import "Model.js" as Model
 // The data is a small status.json produced by a scraper of
 // finaleoutdoor.com/en/live/bike (see the finale-mtb-status repo). This panel
 // curls it on a timer, keeps the last good copy on failure, and flags the
-// reading as stale once it ages past `staleAfterMinutes`.
+// reading as stale once the feed's `checked_at` ages past `staleAfterMinutes`.
 Panel {
   id: root
   moduleName: "com.github.brian-cooney.finale-mtb"
@@ -31,7 +31,7 @@ Panel {
   readonly property string jsonUrl: setting("jsonUrl",
     "https://brian-cooney.github.io/finale-mtb-status/data/status.json")
   readonly property int refreshMinutes: Math.max(5, parseInt(setting("refreshMinutes", 30), 10) || 30)
-  readonly property int staleAfterMinutes: Math.max(30, parseInt(setting("staleAfterMinutes", 180), 10) || 180)
+  readonly property int staleAfterMinutes: Math.max(60, parseInt(setting("staleAfterMinutes", 720), 10) || 720)
   // nf-fa-bicycle. Override with "" for a text-only label.
   readonly property string glyph: setting("glyph", "")
   readonly property string sourcePage: "https://www.finaleoutdoor.com/en/live/bike"
@@ -54,10 +54,10 @@ Panel {
     muted: Color.muted
   })
   readonly property string summary: Model.summaryLine(status, displayState)
-  readonly property string updatedAgo: status && status.generatedAt
-    ? Model.relativeTime(status.generatedAt, nowTick) : ""
+  readonly property string checkedAgo: status && status.checkedAt
+    ? Model.relativeTime(status.checkedAt, nowTick) : ""
   readonly property string tooltipText: summary
-    + (updatedAgo ? "  ·  updated " + updatedAgo : "")
+    + (checkedAgo ? "  ·  checked " + checkedAgo : "")
   readonly property string notificationText: {
     var lines = ["Finale MTB — " + summary]
     var groups = Model.groupByArea(status ? status.closedTrails : [])
@@ -248,7 +248,7 @@ Panel {
                 text: {
                   var bits = []
                   if (root.status && root.status.asOfDate) bits.push("as of " + root.status.asOfDate)
-                  if (root.updatedAgo) bits.push("checked " + root.updatedAgo)
+                  if (root.checkedAgo) bits.push("checked " + root.checkedAgo)
                   return bits.join("  ·  ")
                 }
                 color: Qt.darker(root.barForeground, 1.5)

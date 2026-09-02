@@ -19,6 +19,10 @@ function parseStatus(raw) {
     var summary = data.summary && typeof data.summary === "object" ? data.summary : {};
     return {
       generatedAt: typeof data.generated_at === "string" ? data.generated_at : "",
+      // When the scraper last read the source. Older feeds only carried
+      // generated_at (the content-change time), so fall back to it.
+      checkedAt: typeof data.checked_at === "string" ? data.checked_at
+        : (typeof data.generated_at === "string" ? data.generated_at : ""),
       source: typeof data.source === "string" ? data.source : "",
       asOfDate: typeof data.as_of_date === "string" ? data.as_of_date : "",
       state: normalizeState(summary.state),
@@ -44,22 +48,25 @@ function normalizeState(state) {
   return (s === "open" || s === "partial" || s === "closed" || s === "unknown") ? s : "unknown";
 }
 
-// Minutes since generatedAt, or Infinity when it can't be read.
-function ageMinutes(generatedAtIso, now) {
-  var then = Date.parse(String(generatedAtIso || ""));
+// Minutes since an ISO timestamp, or Infinity when it can't be read.
+function ageMinutes(iso, now) {
+  var then = Date.parse(String(iso || ""));
   if (!isFinite(then)) return Infinity;
   return (now.getTime() - then) / MS_PER_MIN;
 }
 
-function isStale(generatedAtIso, now, staleMinutes) {
-  var limit = intOr(staleMinutes, 180) || 180;
-  return ageMinutes(generatedAtIso, now) > limit;
+// Stale = the scraper has not read the source in a while (checkedAt), which
+// means a dead pipeline rather than merely an unchanged closure list. The
+// source publishes roughly once a day, so the threshold is hours, not minutes.
+function isStale(checkedAtIso, now, staleMinutes) {
+  var limit = intOr(staleMinutes, 720) || 720;
+  return ageMinutes(checkedAtIso, now) > limit;
 }
 
 // Effective state for display: stale data can't be trusted to still be current.
 function displayState(status, now, staleMinutes) {
   if (!status) return "unknown";
-  if (isStale(status.generatedAt, now, staleMinutes)) return "stale";
+  if (isStale(status.checkedAt || status.generatedAt, now, staleMinutes)) return "stale";
   return status.state;
 }
 

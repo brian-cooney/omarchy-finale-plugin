@@ -30,6 +30,14 @@ check("parse: closedCount 2", s.closedCount === 2);
 check("parse: 2 trails kept", s.closedTrails.length === 2);
 check("parse: bad json -> null", M.parseStatus("{not json") === null);
 check("parse: unknown state normalised", M.parseStatus('{"summary":{"state":"weird"}}').state === "unknown");
+check("parse: checkedAt falls back to generated_at", s.checkedAt === "2026-08-28T15:40:00Z");
+
+const withCheck = M.parseStatus(JSON.stringify({
+  generated_at: "2026-08-20T00:00:00Z",   // closures 8 days unchanged
+  checked_at: "2026-08-28T17:50:00Z",     // but re-checked 10 min ago
+  summary: { state: "partial", closed_count: 1 }
+}));
+check("parse: checkedAt read when present", withCheck.checkedAt === "2026-08-28T17:50:00Z");
 
 check("stale: fresh not stale", M.isStale("2026-08-28T17:30:00Z", NOW, 180) === false);
 check("stale: 3h30m old is stale at 180m", M.isStale("2026-08-28T14:30:00Z", NOW, 180) === true);
@@ -37,6 +45,8 @@ check("stale: missing ts is stale", M.isStale("", NOW, 180) === true);
 
 check("displayState: stale wins over partial", M.displayState(s, NOW, 60) === "stale");
 check("displayState: fresh keeps partial", M.displayState(s, NOW, 600) === "partial");
+check("displayState: fresh checkedAt keeps state despite old generatedAt",
+  M.displayState(withCheck, NOW, 720) === "partial");
 
 const colors = { foreground: "#fff", urgent: "#a55", muted: "#788" };
 check("stateColor: open -> foreground", M.stateColor("open", colors) === "#fff");
