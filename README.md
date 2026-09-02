@@ -7,9 +7,9 @@ notices from the official site.
 
 ![state examples](preview.png)
 
-- **Bar label** — a bike glyph plus a compact token:
+- **Bar label** — a bike glyph plus a compact token, in the normal bar
+  foreground colour:
   `✓` all open · `N` N trails closed · `✗` full-network closure · `…` unknown / stale.
-  The label is tinted (theme `urgent` colour) whenever trails are closed.
 - **Panel** (left click) — closed trails grouped by area with any "(until 2pm)"
   qualifiers, the reference date and fetch age, a stale warning when the source
   hasn't updated recently, the latest bulletins verbatim, and a link to the

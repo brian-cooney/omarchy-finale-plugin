@@ -72,7 +72,10 @@ BarWidget {
     anchors.fill: parent
     bar: root.bar
     text: panelLoader.item ? panelLoader.item.label : ""
-    foreground: panelLoader.item ? panelLoader.item.barColor : (root.bar ? root.bar.barForeground : Color.foreground)
+    // Same colour as every other bar icon (WidgetButton's default is
+    // bar.barForeground). State is conveyed by the token and the panel, not
+    // by tinting the bar label — a muted/urgent icon here just reads as an
+    // odd-one-out next to the other widgets.
     horizontalMargin: 8.75
     verticalPadding: 8.75
     tooltipText: panelLoader.item ? panelLoader.item.tooltipText : ""
