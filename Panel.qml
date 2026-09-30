@@ -91,8 +91,8 @@ Panel {
   }
 
   function close() {
-    setCenterHoverRevealSuppressed(false)
     root.controller.hide()
+    setCenterHoverRevealSuppressed(false)
   }
 
   function toggle() {
@@ -106,8 +106,13 @@ Panel {
     return false
   }
 
+  // Newer shells expose the bar through a facade whose
+  // centerHoverRevealSuppressed is read-only; assigning it throws, which would
+  // abort open()/close() before the panel is shown or hidden.
   function setCenterHoverRevealSuppressed(value) {
-    if (root.bar && "centerHoverRevealSuppressed" in root.bar)
+    if (root.bar && typeof root.bar.setCenterHoverRevealSuppressed === "function")
+      root.bar.setCenterHoverRevealSuppressed(value)
+    else if (root.bar && "centerHoverRevealSuppressed" in root.bar)
       root.bar.centerHoverRevealSuppressed = value
   }
 
