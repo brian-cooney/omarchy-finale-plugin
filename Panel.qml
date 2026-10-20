@@ -244,6 +244,7 @@ Panel {
 
               Text {
                 width: parent.width
+                textFormat: Text.PlainText
                 text: root.summary
                 color: root.barForeground
                 font.family: root.bar ? root.bar.fontFamily : Style.font.family
@@ -255,6 +256,7 @@ Panel {
               Text {
                 width: parent.width
                 visible: text !== ""
+                textFormat: Text.PlainText
                 text: {
                   var bits = []
                   if (root.status && root.status.asOfDate) bits.push("as of " + root.status.asOfDate)
@@ -301,6 +303,7 @@ Panel {
                 spacing: Style.space(4)
 
                 Text {
+                  textFormat: Text.PlainText
                   text: areaGroup.modelData.area
                   color: Qt.darker(root.barForeground, 1.4)
                   font.family: root.bar ? root.bar.fontFamily : Style.font.family
@@ -326,6 +329,7 @@ Panel {
                     }
 
                     Text {
+                      textFormat: Text.PlainText
                       text: trailRow.modelData.trail
                       color: root.barForeground
                       font.family: root.bar ? root.bar.fontFamily : Style.font.family
@@ -334,6 +338,7 @@ Panel {
 
                     Text {
                       visible: trailRow.modelData.note !== ""
+                      textFormat: Text.PlainText
                       text: "(" + trailRow.modelData.note + ")"
                       color: Qt.darker(root.barForeground, 1.5)
                       font.family: root.bar ? root.bar.fontFamily : Style.font.family
@@ -399,6 +404,7 @@ Panel {
                 Text {
                   width: parent.width
                   visible: text !== ""
+                  textFormat: Text.PlainText
                   text: (notice.modelData.date ? notice.modelData.date + " — " : "") + (notice.modelData.title || "")
                   color: root.barForeground
                   wrapMode: Text.WordWrap
@@ -410,6 +416,7 @@ Panel {
                 Text {
                   width: parent.width
                   visible: text !== ""
+                  textFormat: Text.PlainText
                   text: Model.noticeParagraphs(notice.modelData.text).join("\n")
                   color: Qt.darker(root.barForeground, 1.3)
                   wrapMode: Text.WordWrap
