@@ -50,8 +50,10 @@ nothing else needs cleaning up.
 ### Local development
 
 ```bash
-git clone https://github.com/brian-cooney/omarchy-finale-plugin.git \
-  ~/.config/omarchy/plugins/com.github.brian-cooney.finale-mtb
+# from your working copy of this repo: copy it into the plugins dir
+# (re-run after each edit)
+rsync -a --delete --exclude .git ./ \
+  ~/.config/omarchy/plugins/com.github.brian-cooney.finale-mtb/
 omarchy-shell shell rescanPlugins
 omarchy plugin enable com.github.brian-cooney.finale-mtb
 
